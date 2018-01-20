@@ -103,7 +103,6 @@
 	#include "ArduCAM.h"
 	#include "arducam_arch_raspberrypi.h"
 #else
-	#include "Arduino.h"
 	#include "ArduCAM.h"
 	#include <Wire.h>
 	#include <SPI.h>
