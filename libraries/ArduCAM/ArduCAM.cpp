@@ -116,7 +116,7 @@
 ArduCAM::ArduCAM()
 {
   sensor_model = OV7670;
-  sensor_addr = 0x42;
+  sensor_addr = 0x21;
 }
 ArduCAM::ArduCAM(byte model ,int CS)
 {
@@ -146,55 +146,35 @@ ArduCAM::ArduCAM(byte model ,int CS)
 		case OV7670:
 		case OV7675:
 		case OV7725:
-		#if defined (RASPBERRY_PI)
-				sensor_addr = 0x21;
-		#else
-		  	sensor_addr = 0x42;
-	    #endif		
-		break;
+			sensor_addr = 0x21;	
+		  break;
 		case MT9D111_A: //Standard MT9D111 module
-      sensor_addr = 0xba;
-    break;
+      sensor_addr = 0x5d;
+      break;
     case MT9D111_B: //Flex MT9D111 AF module
-      sensor_addr = 0x90;
+      sensor_addr = 0x48;
     break;
     case MT9M112:
-    	#if defined (RASPBERRY_PI)
-    		sensor_addr = 0x5d;
-    	#else
-      	sensor_addr = 0x90;
-      #endif
-    break;
+    	sensor_addr = 0x5d;
+      break;
     case MT9M001:
-      sensor_addr = 0xba;
-    break;
+      sensor_addr = 0x5d;
+      break;
     case OV3640:
     case OV5640:
     case OV5642:
     case MT9T112:
     case MT9D112:
-    	#if defined (RASPBERRY_PI)
-    		sensor_addr = 0x3c;
-    	#else
-      	sensor_addr = 0x78;
-       #endif
-   break;
+    	sensor_addr = 0x3c;
+      break;
     case OV2640:
     case OV9650:
     case OV9655:
-    	#if defined (RASPBERRY_PI)
-    		sensor_addr = 0x30;
-    	#else
-      	sensor_addr = 0x60;
-      #endif
-    break;
+    	sensor_addr = 0x30;
+      break;
 		default:
-			#if defined (RASPBERRY_PI)
-		 		sensor_addr = 0x21;
-		 	#else
-		 		sensor_addr = 0x42;
-      #endif
-		break;
+		  sensor_addr = 0x21;
+		  break;
 	}	
 	#if defined (RASPBERRY_PI)
 		// initialize i2c:
@@ -1053,7 +1033,7 @@ byte ArduCAM::wrSensorReg8_8(int regID, int regDat)
 	#if defined (RASPBERRY_PI)
 		arducam_i2c_write( regID , regDat );
 	#else
-		Wire.beginTransmission(sensor_addr >> 1);
+		Wire.beginTransmission(sensor_addr);
 	  Wire.write(regID & 0x00FF);
 	  Wire.write(regDat & 0x00FF);
 	  if (Wire.endTransmission())
@@ -1070,11 +1050,11 @@ byte ArduCAM::rdSensorReg8_8(uint8_t regID, uint8_t* regDat)
 	#if defined (RASPBERRY_PI) 
 		arducam_i2c_read(regID,regDat);
 	#else
-		Wire.beginTransmission(sensor_addr >> 1);
+		Wire.beginTransmission(sensor_addr);
 	  Wire.write(regID & 0x00FF);
 	  Wire.endTransmission();
 	
-	  Wire.requestFrom((sensor_addr >> 1), 1);
+	  Wire.requestFrom(sensor_addr, 1);
 	  if (Wire.available())
 	    *regDat = Wire.read();
 	  delay(1);
@@ -1088,7 +1068,7 @@ byte ArduCAM::wrSensorReg8_16(int regID, int regDat)
 	#if defined (RASPBERRY_PI) 
 		arducam_i2c_write16(regID, regDat );
 	#else
-		Wire.beginTransmission(sensor_addr >> 1);
+		Wire.beginTransmission(sensor_addr);
 	  Wire.write(regID & 0x00FF);
 	
 	  Wire.write(regDat >> 8);            // sends data byte, MSB first
@@ -1107,11 +1087,11 @@ byte ArduCAM::rdSensorReg8_16(uint8_t regID, uint16_t* regDat)
   	arducam_i2c_read16(regID, regDat);
   #else
   	uint8_t temp;
-	  Wire.beginTransmission(sensor_addr >> 1);
+	  Wire.beginTransmission(sensor_addr);
 	  Wire.write(regID);
 	  Wire.endTransmission();
 	
-	  Wire.requestFrom((sensor_addr >> 1), 2);
+	  Wire.requestFrom(sensor_addr, 2);
 	  if (Wire.available())
 	  {
 	    temp = Wire.read();
@@ -1129,7 +1109,7 @@ byte ArduCAM::wrSensorReg16_8(int regID, int regDat)
 		arducam_i2c_word_write(regID, regDat);
 		//arducam_delay_ms(1);
 	#else
-		Wire.beginTransmission(sensor_addr >> 1);
+		Wire.beginTransmission(sensor_addr);
 	  Wire.write(regID >> 8);            // sends instruction byte, MSB first
 	  Wire.write(regID & 0x00FF);
 	  Wire.write(regDat & 0x00FF);
@@ -1146,11 +1126,11 @@ byte ArduCAM::rdSensorReg16_8(uint16_t regID, uint8_t* regDat)
 	#if defined (RASPBERRY_PI) 
 		arducam_i2c_word_read(regID, regDat );
 	#else
-		Wire.beginTransmission(sensor_addr >> 1);
+		Wire.beginTransmission(sensor_addr);
 	  Wire.write(regID >> 8);
 	  Wire.write(regID & 0x00FF);
 	  Wire.endTransmission();
-	  Wire.requestFrom((sensor_addr >> 1), 1);
+	  Wire.requestFrom(sensor_addr, 1);
 	  if (Wire.available())
 	  {
 	    *regDat = Wire.read();
@@ -1165,7 +1145,7 @@ byte ArduCAM::wrSensorReg16_16(int regID, int regDat)
 {
 	#if defined (RASPBERRY_PI)
 	#else
-	  Wire.beginTransmission(sensor_addr >> 1);
+	  Wire.beginTransmission(sensor_addr);
 	  Wire.write(regID >> 8);            // sends instruction byte, MSB first
 	  Wire.write(regID & 0x00FF);
 	  Wire.write(regDat >> 8);            // sends data byte, MSB first
@@ -1185,11 +1165,11 @@ byte ArduCAM::rdSensorReg16_16(uint16_t regID, uint16_t* regDat)
 	#if defined (RASPBERRY_PI)
 	#else
 	  uint16_t temp;
-	  Wire.beginTransmission(sensor_addr >> 1);
+	  Wire.beginTransmission(sensor_addr);
 	  Wire.write(regID >> 8);
 	  Wire.write(regID & 0x00FF);
 	  Wire.endTransmission();
-	  Wire.requestFrom((sensor_addr >> 1), 2);
+	  Wire.requestFrom(sensor_addr, 2);
 	  if (Wire.available())
 	  {
 	    temp = Wire.read();
