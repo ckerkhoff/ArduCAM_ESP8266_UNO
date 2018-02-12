@@ -14,7 +14,6 @@
 // and use Arduino IDE 1.5.2 compiler or above
 #include <UTFT_SPI.h>
 #include <SD.h>
-#include <Wire.h>
 #include <ArduCAM.h>
 #include <SPI.h>
 #include "memorysaver.h"
@@ -82,19 +81,11 @@ UTFT myGLCD(SPI_CS);
 
 void setup()
 {
-  uint8_t vid, pid;
   uint8_t temp;
 
-#if defined(__SAM3X8E__)
-  Wire1.begin();
-#else
-  Wire.begin();
-#endif
+  myCAM.InitComs();
   Serial.begin(115200);
   Serial.println("ArduCAM Start!");
-
-  // set the SPI_CS as an output:
-  pinMode(SPI_CS, OUTPUT);
 
   // initialize SPI:
   SPI.begin();

@@ -14,7 +14,6 @@
 
 #include <UTFT_SPI.h>
 #include <SD.h>
-#include <Wire.h>
 #include <ArduCAM.h>
 #include <SPI.h>
 #include "memorysaver.h"
@@ -41,19 +40,11 @@ UTFT myGLCD(SPI_CS);
 
 void setup()
 {
-  uint16_t vid;
   uint8_t temp; 
   
-#if defined(__SAM3X8E__)
-  Wire1.begin();
-#else
-  Wire.begin();
-#endif
+  myCAM.InitComs();
   Serial.begin(115200);
   Serial.println("ArduCAM Start!"); 
-
-  // set the SPI_CS as an output:
-  pinMode(SPI_CS, OUTPUT);
 
   // initialize SPI:
   SPI.begin(); 
@@ -66,13 +57,11 @@ void setup()
     Serial.println("Check your wiring, make sure using the correct SPI port and chipselect pin");
   	//while(1);
   }
-  //Check if the camera module type is MT9M001
-  myCAM.rdSensorReg8_16(0x00, &vid);
 
-  if (vid != 0x8431)
+  //Check if the camera module type is MT9M001
+  if (!myCAM.VerifyModuleType())
   {
     Serial.println("Can't find MT9M001 module!");
-    Serial.println(vid, HEX);
   }
   else
     Serial.println("MT9M001 detected");
@@ -84,8 +73,7 @@ void setup()
   
   myCAM.InitCAM();
   myCAM.write_reg(ARDUCHIP_TIM, PCLK_REVERSE_MASK);
-  myCAM.wrSensorReg8_16(0x03, 240);
-  myCAM.wrSensorReg8_16(0x04, 639);
+  myCAM.wrSensorRegs8_16(MT9M001_QVGA_30fps);
   //Initialize SD Card
   if (!SD.begin(SD_CS)) 
   {
@@ -143,8 +131,7 @@ void GrabImage(char* str)
     Serial.println("Open File Error");
     return;
   }
-  myCAM.wrSensorReg8_16(0x03, 1023);
-  myCAM.wrSensorReg8_16(0x04, 1279);   
+  myCAM.wrSensorRegs8_16(MT9M001_RAW);
 
   //Flush the FIFO 
   myCAM.flush_fifo();		 
@@ -178,8 +165,7 @@ void GrabImage(char* str)
   outFile.close(); 
   //Clear the capture done flag 
   myCAM.clear_fifo_flag();
-  myCAM.wrSensorReg8_16(0x03, 240);
-  myCAM.wrSensorReg8_16(0x04, 639);
+  myCAM.wrSensorRegs8_16(MT9M001_QVGA_30fps);
   //Switch to LCD Mode
   myCAM.write_reg(ARDUCHIP_TIM, PCLK_REVERSE_MASK);
   return;

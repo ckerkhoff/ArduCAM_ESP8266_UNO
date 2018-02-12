@@ -17,7 +17,6 @@
 // 8. If receive 0x31 ,set camera to BMP  output mode.
 // This program requires the ArduCAM V4.0.0 (or later) library and ARDUCAM_SHIELD_V2
 // and use Arduino IDE 1.5.2 compiler or above
-#include <Wire.h>
 #include <ArduCAM.h>
 #include <SPI.h>
 #include "memorysaver.h"
@@ -55,20 +54,15 @@ uint8_t read_fifo_burst(ArduCAM myCAM);
 
 void setup() {
   // put your setup code here, to run once:
-  uint8_t vid, pid;
   uint8_t temp;
+  myCAM.InitComs();
 #if defined(__SAM3X8E__)
-  Wire1.begin();
   Serial.begin(115200);
 #else
-  Wire.begin();
   Serial.begin(921600);
 #endif
 
   Serial.println("ACK CMD ArduCAM Start!");
-
-  // set the CS as an output:
-  pinMode(SPI_CS, OUTPUT);
 
   // initialize SPI:
   SPI.begin();
@@ -81,33 +75,11 @@ void setup() {
     Serial.println("ACK CMD SPI interface Error!");    
     while(1);
   }
-   #if defined (OV2640_CAM)
-     //Check if the camera module type is OV2640
-     myCAM.wrSensorReg8_8(0xff, 0x01);  
-     myCAM.rdSensorReg8_8(OV2640_CHIPID_HIGH, &vid);
-     myCAM.rdSensorReg8_8(OV2640_CHIPID_LOW, &pid);
-     if ((vid != 0x26) || (pid != 0x42))
-      Serial.println("ACK CMD Can't find OV2640 module!");
-     else
-      Serial.println("ACK CMD OV2640 detected.");
-   #elif defined (OV5640_CAM)
-    //Check if the camera module type is OV5640
-    myCAM.rdSensorReg16_8(OV5640_CHIPID_HIGH, &vid);
-    myCAM.rdSensorReg16_8(OV5640_CHIPID_LOW, &pid);
-    if ((vid != 0x56) || (pid != 0x40))
-      Serial.println("ACK CMD Can't find OV5640 module!");
-    else
-      Serial.println("ACK CMD OV5640 detected.");
-  #elif defined (OV5642_CAM)
-    //Check if the camera module type is OV5642
-    myCAM.wrSensorReg16_8(0xff, 0x01);
-    myCAM.rdSensorReg16_8(OV5642_CHIPID_HIGH, &vid);
-    myCAM.rdSensorReg16_8(OV5642_CHIPID_LOW, &pid);
-    if ((vid != 0x56) || (pid != 0x42))
-      Serial.println("ACK CMD Can't find OV5642 module!");
-    else
-      Serial.println("ACK CMD OV5642 detected.");
-  #endif
+
+  if (!myCAM.VerifyModuleType())
+    Serial.println(F("Can't find ArduCAM module!"));
+  else
+    Serial.println(F("ArduCAM module detected."));
 
   //Change to JPEG capture mode and initialize the OV5642 module
   myCAM.set_format(JPEG);
@@ -256,10 +228,10 @@ void loop() {
         myCAM.set_format(BMP);
         myCAM.InitCAM();
         myCAM.clear_bit(ARDUCHIP_TIM, VSYNC_LEVEL_MASK);
-        #if !(defined (OV2640_CAM))
-         myCAM.wrSensorReg16_8(0x3818, 0x81);
-         myCAM.wrSensorReg16_8(0x3621, 0xA7);
-        #endif
+        //#if !(defined (OV2640_CAM))
+        // myCAM.wrSensorReg16_8(0x3818, 0x81);
+        // myCAM.wrSensorReg16_8(0x3621, 0xA7);
+        //#endif
         break;
       default:
         break;

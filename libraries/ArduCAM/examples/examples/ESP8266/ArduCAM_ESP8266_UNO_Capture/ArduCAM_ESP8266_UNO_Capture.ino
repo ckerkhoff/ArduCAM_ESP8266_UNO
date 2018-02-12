@@ -18,7 +18,6 @@
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
-#include <Wire.h>
 #include <ArduCAM.h>
 #include <SPI.h>
 #include "memorysaver.h"
@@ -249,18 +248,10 @@ Serial.println("QL change to: " + server.arg("ql"));
 }
 
 void setup() {
-uint8_t vid, pid;
 uint8_t temp;
-#if defined(__SAM3X8E__)
-Wire1.begin();
-#else
-Wire.begin();
-#endif
+myCAM.InitComs();
 Serial.begin(115200);
 Serial.println(F("ArduCAM Start!"));
-
-// set the CS as an output:
-pinMode(CS, OUTPUT);
 
 // initialize SPI:
 SPI.begin();
@@ -273,36 +264,11 @@ if (temp != 0x55){
 Serial.println(F("SPI1 interface Error!"));
 while(1);
 }
-#if defined (OV2640_MINI_2MP) || defined (OV2640_CAM)
-//Check if the camera module type is OV2640
-myCAM.wrSensorReg8_8(0xff, 0x01);
-myCAM.rdSensorReg8_8(OV2640_CHIPID_HIGH, &vid);
-myCAM.rdSensorReg8_8(OV2640_CHIPID_LOW, &pid);
-if ((vid != 0x26 ) && (( pid != 0x41 ) || ( pid != 0x42 )))
-Serial.println(F("Can't find OV2640 module!"));
-else
-Serial.println(F("OV2640 detected."));
-#elif defined (OV5640_MINI_5MP_PLUS) || defined (OV5640_CAM)
-//Check if the camera module type is OV5640
-myCAM.wrSensorReg16_8(0xff, 0x01);
-myCAM.rdSensorReg16_8(OV5640_CHIPID_HIGH, &vid);
-myCAM.rdSensorReg16_8(OV5640_CHIPID_LOW, &pid);
-if((vid != 0x56) || (pid != 0x40))
-Serial.println(F("Can't find OV5640 module!"));
-else
-Serial.println(F("OV5640 detected."));
-#elif defined (OV5642_MINI_5MP_PLUS) || defined (OV5642_MINI_5MP) || defined (OV5642_MINI_5MP_BIT_ROTATION_FIXED) ||(defined (OV5642_CAM))
-//Check if the camera module type is OV5642
-myCAM.wrSensorReg16_8(0xff, 0x01);
-myCAM.rdSensorReg16_8(OV5642_CHIPID_HIGH, &vid);
-myCAM.rdSensorReg16_8(OV5642_CHIPID_LOW, &pid);
-if((vid != 0x56) || (pid != 0x42)){
-Serial.println(F("Can't find OV5642 module!"));
-}
-else
-Serial.println(F("OV5642 detected."));
-#endif
 
+if (!myCAM.VerifyModuleType())
+  Serial.println(F("Can't find ArduCAM module!"));
+else
+  Serial.println(F("ArduCAM module detected."));
 
 //Change to JPEG capture mode and initialize the OV2640 module
 myCAM.set_format(JPEG);

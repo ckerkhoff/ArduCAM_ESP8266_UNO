@@ -12,7 +12,12 @@ const struct sensor_reg MT9M001_QVGA_30fps[] PROGMEM=
     {0xff, 0xffff }
 };
 
-
+const struct sensor_reg MT9M001_RAW[] PROGMEM=
+{
+	{0x03, 1023},
+	{0x04, 1279},
+	{0xff, 0xffff}
+};
 
 
 #endif //MT9M001_REGS_H

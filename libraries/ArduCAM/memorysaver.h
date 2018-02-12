@@ -2,6 +2,7 @@
 #define _MEMORYSAVER_
 
 //Only when using raspberry,enable it
+#define ARCH_ARDUINO
 //#define RASPBERRY_PI
 
 //There are two steps you need to modify in this file before normal compilation

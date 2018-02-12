@@ -98,7 +98,6 @@
 #else
 	#include "Arduino.h"
 	#include <pins_arduino.h>
-	#include "memorysaver.h"
 #endif
 
 #if defined (__AVR__)
@@ -361,7 +360,10 @@ class ArduCAM
 	public:
 	ArduCAM( void );
 	ArduCAM(byte model ,int CS);
+	void InitComs(void);
 	void InitCAM( void );
+
+	bool VerifyModuleType(void);
 	
 	void CS_HIGH(void);
 	void CS_LOW(void);
@@ -396,22 +398,6 @@ class ArduCAM
 	
   // Write 16 bit values to 16 bit register address
 	int wrSensorRegs16_16(const struct sensor_reg*);
-	
-	// Read/write 8 bit value to/from 8 bit register address	
-	byte wrSensorReg8_8(int regID, int regDat);
-	byte rdSensorReg8_8(uint8_t regID, uint8_t* regDat);
-	
-	// Read/write 16 bit value to/from 8 bit register address
-	byte wrSensorReg8_16(int regID, int regDat);
-	byte rdSensorReg8_16(uint8_t regID, uint16_t* regDat);
-	
-	// Read/write 8 bit value to/from 16 bit register address
-	byte wrSensorReg16_8(int regID, int regDat);
-	byte rdSensorReg16_8(uint16_t regID, uint8_t* regDat);
-	
-	// Read/write 16 bit value to/from 16 bit register address
-	byte wrSensorReg16_16(int regID, int regDat);
-	byte rdSensorReg16_16(uint16_t regID, uint16_t* regDat);
 
 	void OV2640_set_JPEG_size(uint8_t size);
 	void OV5642_set_JPEG_size(uint8_t size);

@@ -7,7 +7,6 @@
 // This program requires the ArduCAM V4.0.0 (or later)、ArduCAM_Touch and UTFT4ArduCAM_SPI library and ARDUCAM_SHIELD_REVC
 // and use Arduino IDE 1.6.8 compiler or above
 
-#include <Wire.h>
 #include <ArduCAM.h>
 #include <ArduCAM_Touch.h>
 #include <EEPROM.h>
@@ -37,13 +36,10 @@ extern uint8_t BigFont[];
 ArduCAM_Touch  myTouch(8, 2);
 void setup() {
 // put your setup code here, to run once:
-uint8_t vid, pid;
 uint8_t temp;
-Wire.begin();
+myCAM.InitComs();
 Serial.begin(921600);
 Serial.println(F("ACK CMD ArduCAM Start!"));
-// set the CS as an output:
-pinMode(SPI_CS, OUTPUT);
 // initialize SPI:
 SPI.begin();
 while(1){
@@ -67,46 +63,16 @@ if (temp!= 0x0A)
 else{
   myTouch.TP_Get_Adjdata();
 }
-#if defined (OV2640_CAM)
+
   while(1){
-    //Check if the camera module type is OV2640
-    myCAM.wrSensorReg8_8(0xff, 0x01);
-    myCAM.rdSensorReg8_8(OV2640_CHIPID_HIGH, &vid);
-    myCAM.rdSensorReg8_8(OV2640_CHIPID_LOW, &pid);
-    if ((vid != 0x26 ) && (( pid != 0x41 ) || ( pid != 0x42 ))){
-      Serial.println(F("Can't find OV2640 module!"));
+    if (!myCAM.VerifyModuleType()){
+      Serial.println(F("Can't find ArduCAM module!"));
       delay(1000);continue;
     }else{
-      Serial.println(F("OV2640 detected."));break;
+      Serial.println(F("ArduCAM module detected."));break;
     }
   } 
-#elif defined (OV5640_CAM)
-while(1){
-  //Check if the camera module type is OV5642
-  myCAM.wrSensorReg16_8(0xff, 0x01);
-  myCAM.rdSensorReg16_8(OV5640_CHIPID_HIGH, &vid);
-  myCAM.rdSensorReg16_8(OV5640_CHIPID_LOW, &pid);
-  if((vid != 0x56) || (pid != 0x40)){
-    Serial.println(F("Can't find OV5640 module!"));
-    delay(1000);continue;
-  }else{
-    Serial.println(F("OV5640 detected."));break;
-  } 
-}
-#elif defined (OV5642_CAM)
-while(1){
-  //Check if the camera module type is OV5642
-  myCAM.wrSensorReg16_8(0xff, 0x01);
-  myCAM.rdSensorReg16_8(OV5642_CHIPID_HIGH, &vid);
-  myCAM.rdSensorReg16_8(OV5642_CHIPID_LOW, &pid);
-  if((vid != 0x56) || (pid != 0x42)){
-    Serial.println(F("Can't find OV5642 module!"));
-    delay(1000);continue;
-  } else{
-    Serial.println(F("OV5642 detected.")); break;
-  }
-}
-#endif
+
 drawHomeScreen();
 }
 void loop() {
