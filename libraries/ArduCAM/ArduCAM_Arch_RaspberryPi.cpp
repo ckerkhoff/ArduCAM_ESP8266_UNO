@@ -92,4 +92,9 @@ void arducam_spi_transfers(uint8_t *buf, uint32_t size)
 	wiringPiSPIDataRW(SPI_ARDUCAM, buf, size);
 }
 
+void arducam_delay_ms(uint32_t delay_ms)
+{
+	usleep(1000*delay_ms);
+}
+
 #endif

@@ -193,7 +193,7 @@ void ArduCAM::InitCAM()
       {
 #if defined OV7660_CAM
         wrSensorReg8_8(sensor_addr, 0x12, 0x80);
-        delay(100);
+        arducam_delay_ms(100);
         wrSensorRegs8_8(OV7660_QVGA);
 #endif
         break;
@@ -203,7 +203,7 @@ void ArduCAM::InitCAM()
 #if defined OV7725_CAM
        byte reg_val;
         wrSensorReg8_8(sensor_addr, 0x12, 0x80);
-        delay(100);
+        arducam_delay_ms(100);
         wrSensorRegs8_8(OV7725_QVGA);
         rdSensorReg8_8(sensor_addr, 0x15, &reg_val);
         wrSensorReg8_8(sensor_addr, 0x15, (reg_val | 0x02));
@@ -214,7 +214,7 @@ void ArduCAM::InitCAM()
       {
 #if defined OV7670_CAM
         wrSensorReg8_8(sensor_addr, 0x12, 0x80);
-        delay(100);
+        arducam_delay_ms(100);
         wrSensorRegs8_8(OV7670_QVGA);
 #endif
         break;
@@ -223,7 +223,7 @@ void ArduCAM::InitCAM()
       {
 #if defined OV7675_CAM
         wrSensorReg8_8(sensor_addr, 0x12, 0x80);
-        delay(100);
+        arducam_delay_ms(100);
         wrSensorRegs8_8(OV7675_QVGA);
 
 #endif
@@ -234,7 +234,7 @@ void ArduCAM::InitCAM()
       {
 #if defined MT9D111_CAM
         wrSensorRegs8_16(MT9D111_QVGA_30fps);
-        delay(1000);
+        arducam_delay_ms(1000);
         wrSensorReg8_16(sensor_addr, 0x97, 0x0020);
         wrSensorReg8_16(sensor_addr, 0xf0, 0x00);
         wrSensorReg8_16(sensor_addr, 0x21, 0x8403); //Mirror Column
@@ -249,25 +249,13 @@ void ArduCAM::InitCAM()
 #if ( defined(OV5642_CAM) || defined(OV5642_MINI_5MP) || defined(OV5642_MINI_5MP_BIT_ROTATION_FIXED) || defined(OV5642_MINI_5MP_PLUS) )
         wrSensorReg16_8(sensor_addr, 0x3008, 0x80);
         wrSensorRegs16_8(OV5642_QVGA_Preview);
-        #if defined (RASPBERRY_PI) 
 			  arducam_delay_ms(100);
-				#else
-        delay(100);
-        #endif
         if (m_fmt == JPEG)
         {
-        	#if defined (RASPBERRY_PI) 
 				  arducam_delay_ms(100);
-					#else
-	        delay(100);
-	        #endif
           wrSensorRegs16_8(OV5642_JPEG_Capture_QSXGA);
           wrSensorRegs16_8(ov5642_320x240);
-          #if defined (RASPBERRY_PI) 
-			  arducam_delay_ms(100);
-				#else
-        delay(100);
-        #endif
+			    arducam_delay_ms(100);
           wrSensorReg16_8(sensor_addr, 0x3818, 0xa8);
           wrSensorReg16_8(sensor_addr, 0x3621, 0x10);
           wrSensorReg16_8(sensor_addr, 0x3801, 0xb0);
@@ -297,14 +285,14 @@ void ArduCAM::InitCAM()
     case OV5640:
       {
 #if ( defined(OV5640_CAM) || defined(OV5640_MINI_5MP_PLUS) )
-        delay(100);
+        arducam_delay_ms(100);
         if (m_fmt == JPEG)
         {
           wrSensorReg16_8(sensor_addr, 0x3103, 0x11);
           wrSensorReg16_8(sensor_addr, 0x3008, 0x82);
-          delay(100);
+          arducam_delay_ms(100);
           wrSensorRegs16_8(OV5640YUV_Sensor_Dvp_Init);
-          delay(500);
+          arducam_delay_ms(500);
           wrSensorRegs16_8(OV5640_JPEG_QSXGA);
           wrSensorRegs16_8(OV5640_QSXGA2QVGA);
           #if (defined(OV5640_MINI_5MP_PLUS) || (defined ARDUCAM_SHIELD_V2))
@@ -317,7 +305,7 @@ void ArduCAM::InitCAM()
         {
           wrSensorReg16_8(sensor_addr, 0x3103, 0x11);
           wrSensorReg16_8(sensor_addr, 0x3008, 0x82);
-          delay(500);
+          arducam_delay_ms(500);
           wrSensorRegs16_8(OV5640YUV_Sensor_Dvp_Init);
           wrSensorRegs16_8(OV5640_RGB_QVGA);
         }
@@ -337,7 +325,7 @@ void ArduCAM::InitCAM()
 #if (defined(OV2640_CAM) || defined(OV2640_MINI_2MP))
         wrSensorReg8_8(sensor_addr, 0xff, 0x01);
         wrSensorReg8_8(sensor_addr, 0x12, 0x80);
-        delay(100);
+        arducam_delay_ms(100);
         if (m_fmt == JPEG)
         {
           wrSensorRegs8_8(OV2640_JPEG_INIT);
@@ -379,7 +367,7 @@ void ArduCAM::InitCAM()
         wrSensorReg8_16(sensor_addr, 0x01, 0x01);
         wrSensorReg8_16(sensor_addr, 0x07, 0x01);
         wrSensorReg8_16(sensor_addr, 0x07, 0x00);
-        delay(100);
+        arducam_delay_ms(100);
         wrSensorRegs8_16(MT9V111_QVGA);
         //delay(1000);
         wrSensorReg8_16(sensor_addr, 0x97, 0x0020);
@@ -414,7 +402,7 @@ void ArduCAM::InitCAM()
         wrSensorReg16_16(sensor_addr, 0x0014 , 0x2547 );
         wrSensorReg16_16(sensor_addr, 0x0014 , 0x3447 );
         wrSensorReg16_16(sensor_addr, 0x0014 , 0x3047 );
-        delay(10);
+        arducam_delay_ms(10);
         wrSensorReg16_16(sensor_addr, 0x0014 , 0x3046 );
         wrSensorReg16_16(sensor_addr, 0x0022 , 0x01f4 );
         wrSensorReg16_16(sensor_addr, 0x001e , 0x0707 );
@@ -424,20 +412,20 @@ void ArduCAM::InitCAM()
         wrSensorReg16_16(sensor_addr, 0x3b82 , 0x0004 );
         wrSensorReg16_16(sensor_addr, 0x0018 , 0x402f );
         wrSensorReg16_16(sensor_addr, 0x0018 , 0x402e );
-        delay(50);
+        arducam_delay_ms(50);
         wrSensorReg16_16(sensor_addr, 0x0614 , 0x0001 );
-        delay(1);
+        arducam_delay_ms(1);
         wrSensorReg16_16(sensor_addr, 0x0614 , 0x0001 );
-        delay(1);
+        arducam_delay_ms(1);
         wrSensorReg16_16(sensor_addr, 0x0614 , 0x0001 );
-        delay(1);
+        arducam_delay_ms(1);
         wrSensorReg16_16(sensor_addr, 0x0614 , 0x0001 );
-        delay(1);
+        arducam_delay_ms(1);
         wrSensorReg16_16(sensor_addr, 0x0614 , 0x0001 );
-        delay(1);
+        arducam_delay_ms(1);
         wrSensorReg16_16(sensor_addr, 0x0614 , 0x0001 );
-        delay(1);
-        delay(10);
+        arducam_delay_ms(1);
+        arducam_delay_ms(10);
         //init pll
         wrSensorReg16_16(sensor_addr, 0x098e , 0x6800 );
         wrSensorReg16_16(sensor_addr, 0x0990 , 0x0140 );
@@ -569,7 +557,7 @@ void ArduCAM::InitCAM()
         wrSensorReg16_16(sensor_addr, 0x001e , 0x0777 );
         wrSensorReg16_16(sensor_addr, 0x098e , 0x8400 );
         wrSensorReg16_16(sensor_addr, 0x0990 , 0x0001 );
-        delay(100);
+        arducam_delay_ms(100);
         wrSensorReg16_16(sensor_addr, 0x098e , 0x8400 );
         wrSensorReg16_16(sensor_addr, 0x0990 , 0x0006 );
         //Serial.println("MT9T112 init done");
@@ -581,19 +569,19 @@ void ArduCAM::InitCAM()
 #if defined MT9D112_CAM
         wrSensorReg16_16(sensor_addr, 0x301a , 0x0acc );
         wrSensorReg16_16(sensor_addr, 0x3202 , 0x0008 );
-        delay(100 );
+        arducam_delay_ms(100 );
         wrSensorReg16_16(sensor_addr, 0x341e , 0x8f09 );
         wrSensorReg16_16(sensor_addr, 0x341c , 0x020c );
-        delay(100 );
+        arducam_delay_ms(100 );
         wrSensorRegs16_16(MT9D112_default_setting);
         wrSensorReg16_16(sensor_addr, 0x338c , 0xa103 );
         wrSensorReg16_16(sensor_addr, 0x3390 , 0x0006 );
-        delay(100 );
+        arducam_delay_ms(100 );
         wrSensorReg16_16(sensor_addr, 0x338c , 0xa103 );
         wrSensorReg16_16(sensor_addr, 0x3390 , 0x0005 );
-        delay(100 );
+        arducam_delay_ms(100 );
         wrSensorRegs16_16(MT9D112_soc_init);
-        delay(200);
+        arducam_delay_ms(200);
         wrSensorReg16_16(sensor_addr, 0x332E, 0x0020); //RGB565
 
 #endif

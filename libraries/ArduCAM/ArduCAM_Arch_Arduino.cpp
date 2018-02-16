@@ -169,4 +169,9 @@ void arducam_spi_transfers(uint8_t *buf, uint32_t size)
 {
 }
 
+void arducam_delay_ms(uint32_t delay_ms)
+{
+	delay(delay_ms);
+}
+
 #endif
