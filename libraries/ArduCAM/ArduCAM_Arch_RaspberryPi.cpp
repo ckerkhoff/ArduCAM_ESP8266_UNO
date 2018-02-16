@@ -4,6 +4,7 @@
 
 #include "ArduCAM_Arch.h"
 #include <wiringPiI2C.h>
+#include <wiringPiSPI.h>
 
 bool arducam_i2c_init(uint8_t sensor_addr)
 {
@@ -59,6 +60,36 @@ byte wrSensorReg16_16(byte sensor_addr, int regID, int regDat)
 byte rdSensorReg16_16(byte sensor_addr, uint16_t regID, uint16_t* regDat)
 {
     return (1);
+}
+
+void arducam_spi_write(uint8_t address, uint8_t value)
+{
+    uint8_t spiData[2];
+	spiData[0] = address | 0x80;
+    spiData[1] = value;
+	wiringPiSPIDataRW(SPI_ARDUCAM, spiData, 2);
+}
+
+uint8_t arducam_spi_read(uint8_t address)
+{
+	uint8_t spiData[2];
+	spiData[0] = address & 0x7F;
+	spiData[1] = 0x00;
+  	wiringPiSPIDataRW(SPI_ARDUCAM, spiData, 2);
+
+  	return spiData[1];
+}
+
+void arducam_spi_transfer(uint8_t data)
+{
+	uint8_t spiData [1];
+	spiData [0] = data;
+	wiringPiSPIDataRW(SPI_ARDUCAM, spiData, 1);
+}
+
+void arducam_spi_transfers(uint8_t *buf, uint32_t size)
+{
+	wiringPiSPIDataRW(SPI_ARDUCAM, buf, size);
 }
 
 #endif

@@ -91,6 +91,7 @@
   2016/10/28  V4.0.1  by Lee	Add support for Raspberry Pi
   --------------------------------------*/
 #include "memorysaver.h"
+#include "ArduCAM.h"
 #include "ArduCAM_Arch.h"
 #if defined ( RASPBERRY_PI )
 	#include <string.h>
@@ -100,11 +101,7 @@
 	#include <stdint.h>
 	#include <unistd.h>
 	#include <wiringPi.h>
-	#include "ArduCAM.h"
-	#include "arducam_arch_raspberrypi.h"
 #else
-	#include "ArduCAM.h"
-	#include <SPI.h>
 	#include "HardwareSerial.h"
 #endif
 
@@ -182,7 +179,9 @@ ArduCAM::ArduCAM(byte model ,int CS)
 
 void ArduCAM::InitComs()
 {
-  arducam_i2c_init(sensor_addr);
+  if (!arducam_i2c_init(sensor_addr)) {
+    printf("ERROR: I2C init failed\n");
+  }
 }
 
 void ArduCAM::InitCAM()
@@ -670,7 +669,7 @@ uint32_t ArduCAM::read_fifo_length(void)
 uint8_t ArduCAM::transfer(uint8_t data)
 {
   uint8_t temp;
-  temp = arducam_spi_transfer(data);
+  arducam_spi_transfer(data);
   return temp;
 }
 
@@ -683,12 +682,7 @@ void ArduCAM::transfers(uint8_t *buf, uint32_t size)
 
 void ArduCAM::set_fifo_burst()
 {
-	#if defined (RASPBERRY_PI)
-	transfer(BURST_FIFO_READ);
-	#else
-    SPI.transfer(BURST_FIFO_READ);
-   #endif
-		
+  arducam_spi_transfer(BURST_FIFO_READ);
 }
 
 void ArduCAM::CS_HIGH(void)
@@ -778,12 +772,7 @@ void ArduCAM::set_mode(uint8_t mode)
 uint8_t ArduCAM::bus_write(int address,int value)
 {	
 	cbi(P_CS, B_CS);
-	#if defined (RASPBERRY_PI)
-		arducam_spi_write(address | 0x80, value);
-	#else
-		SPI.transfer(address);
-		SPI.transfer(value);
-	#endif
+	arducam_spi_write(address, value);
 	sbi(P_CS, B_CS);
 	return 1;
 }
@@ -792,35 +781,19 @@ uint8_t ArduCAM:: bus_read(int address)
 {
 	uint8_t value;
 	cbi(P_CS, B_CS);
-	#if defined (RASPBERRY_PI)
-		value = arducam_spi_read(address & 0x7F);
-		sbi(P_CS, B_CS);
-		return value;	
+
+	#if (!defined(RASPBERRY_PI) && (defined(ESP8266) || defined(__arm__)) && defined(OV5642_MINI_5MP))
+		value = arducam_spi_read(address);
+    // correction for bit rotation from readback
+		value = (byte)(value >> 1) | (value << 7);
 	#else
-		#if (defined(ESP8266) || defined(__arm__))
-		#if defined(OV5642_MINI_5MP)
-		  SPI.transfer(address);
-		  value = SPI.transfer(0x00);
-		  // correction for bit rotation from readback
-		  value = (byte)(value >> 1) | (value << 7);
-		  // take the SS pin high to de-select the chip:
-		  sbi(P_CS, B_CS);
-		  return value;
-		#else
-		  SPI.transfer(address);
-		  value = SPI.transfer(0x00);
-		  // take the SS pin high to de-select the chip:
-		  sbi(P_CS, B_CS);
-		  return value;
-		#endif
-		#else
-		  SPI.transfer(address);
-		  value = SPI.transfer(0x00);
-		  // take the SS pin high to de-select the chip:
-		  sbi(P_CS, B_CS);
-		  return value;
-		#endif
-#endif
+		value = arducam_spi_read(address);
+  #endif
+
+  // take the SS pin high to de-select the chip:
+	sbi(P_CS, B_CS);
+  
+  return value;
 }
 
 

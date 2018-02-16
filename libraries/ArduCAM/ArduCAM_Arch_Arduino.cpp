@@ -3,6 +3,7 @@
 #if defined ( ARCH_ARDUINO )
 
 #include "ArduCAM_Arch.h"
+#include <SPI.h>
 #include <Wire.h>
 #if defined(__SAM3X8E__)
 	#define Wire Wire1
@@ -142,6 +143,30 @@ byte rdSensorReg16_16(byte sensor_addr, uint16_t regID, uint16_t* regDat)
 	delay(1);
 
   	return (1);
+}
+
+void arducam_spi_write(uint8_t address, uint8_t value)
+{
+	SPI.transfer(address);
+	SPI.transfer(value);
+}
+
+uint8_t arducam_spi_read(uint8_t address)
+{
+	uint8_t value;
+	SPI.transfer(address);
+	value = SPI.transfer(0x00);
+
+	return value;
+}
+
+void arducam_spi_transfer(uint8_t data)
+{
+	SPI.transfer(data);
+}
+
+void arducam_spi_transfers(uint8_t *buf, uint32_t size)
+{
 }
 
 #endif
