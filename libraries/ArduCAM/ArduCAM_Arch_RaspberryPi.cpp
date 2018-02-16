@@ -3,6 +3,7 @@
 #if defined ( RASPBERRY_PI )
 
 #include "ArduCAM_Arch.h"
+#include <time.h>
 #include <wiringPiI2C.h>
 #include <wiringPiSPI.h>
 

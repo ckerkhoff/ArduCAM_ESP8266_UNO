@@ -101,8 +101,6 @@
 	#include <stdint.h>
 	#include <unistd.h>
 	#include <wiringPi.h>
-#else
-	#include "HardwareSerial.h"
 #endif
 
 
