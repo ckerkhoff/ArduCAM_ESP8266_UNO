@@ -166,13 +166,7 @@ ArduCAM::ArduCAM(byte model ,int CS)
 		default:
 		  sensor_addr = 0x21;
 		  break;
-	}	
-	#if defined (RASPBERRY_PI)
-		// initialize i2c:
-	if (!arducam_i2c_init(sensor_addr)) {
-		printf("ERROR: I2C init failed\n");
 	}
-	#endif
 }
 
 void ArduCAM::InitComs()
