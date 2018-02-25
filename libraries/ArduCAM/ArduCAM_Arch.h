@@ -25,6 +25,8 @@ byte wrSensorReg16_16(byte sensor_addr, int regID, int regDat);
 //I2C Read 16bit address, 16bit data
 byte rdSensorReg16_16(byte sensor_addr, uint16_t regID, uint16_t* regDat);
 
+void arducam_spi_init();
+
 void arducam_spi_write(uint8_t address, uint8_t value);
 uint8_t arducam_spi_read(uint8_t address);
 

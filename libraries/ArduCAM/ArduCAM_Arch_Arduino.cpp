@@ -18,6 +18,13 @@ bool arducam_i2c_init(uint8_t sensor_addr)
   	#endif
 }
 
+void arducam_spi_init()
+{
+	// initialize SPI:
+	SPI.begin();
+	SPI.setFrequency(4000000); //4MHz
+}
+
 // Read/write 8 bit value to/from 8 bit register address
 byte wrSensorReg8_8(byte sensor_addr, int regID, int regDat)
 {

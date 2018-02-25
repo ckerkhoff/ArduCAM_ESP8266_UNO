@@ -225,9 +225,7 @@ void setup(){
   pinMode(CAM_POWER_ON , OUTPUT);
   digitalWrite(CAM_POWER_ON, HIGH);
    delay(1000);
-  // initialize SPI:
-  SPI.begin();
- 
+
   //Check if the ArduCAM SPI bus is OK
   myCAM.write_reg(ARDUCHIP_TEST1, 0x55);
   temp = myCAM.read_reg(ARDUCHIP_TEST1);

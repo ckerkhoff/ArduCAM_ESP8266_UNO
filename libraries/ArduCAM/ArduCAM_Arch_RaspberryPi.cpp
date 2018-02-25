@@ -7,9 +7,17 @@
 #include <wiringPiI2C.h>
 #include <wiringPiSPI.h>
 
+#define	SPI_ARDUCAM_SPEED	1000000
+#define	SPI_ARDUCAM	0
+
 bool arducam_i2c_init(uint8_t sensor_addr)
 {
     return wiringPiI2CSetup(sensor_addr) != -1;
+}
+
+void arducam_spi_init()
+{
+	wiringPiSPISetup(SPI_ARDUCAM, SPI_ARDUCAM_SPEED);
 }
 
 // Read/write 8 bit value to/from 8 bit register address	

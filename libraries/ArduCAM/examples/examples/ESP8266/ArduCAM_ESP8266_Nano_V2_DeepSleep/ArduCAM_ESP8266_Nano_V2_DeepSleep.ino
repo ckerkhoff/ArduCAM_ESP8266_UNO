@@ -133,8 +133,7 @@ void setup() {
   //use pin to power camera:
   pinMode(CAM_POWER_ON , OUTPUT);
   digitalWrite(CAM_POWER_ON, HIGH);
-  //initialize SPI:
-  SPI.begin();
+
   delay(1000);
   //Check if the ArduCAM SPI bus is OK
   myCAM.write_reg(ARDUCHIP_TEST1, 0x55);

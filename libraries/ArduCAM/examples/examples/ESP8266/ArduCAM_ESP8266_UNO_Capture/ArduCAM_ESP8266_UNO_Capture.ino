@@ -253,10 +253,6 @@ myCAM.InitComs();
 Serial.begin(115200);
 Serial.println(F("ArduCAM Start!"));
 
-// initialize SPI:
-SPI.begin();
-SPI.setFrequency(4000000); //4MHz
-
 //Check if the ArduCAM SPI bus is OK
 myCAM.write_reg(ARDUCHIP_TEST1, 0x55);
 temp = myCAM.read_reg(ARDUCHIP_TEST1);

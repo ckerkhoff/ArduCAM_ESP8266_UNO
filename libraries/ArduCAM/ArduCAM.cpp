@@ -174,6 +174,8 @@ void ArduCAM::InitComs()
   if (!arducam_i2c_init(sensor_addr)) {
     printf("ERROR: I2C init failed\n");
   }
+
+  arducam_spi_init();
 }
 
 void ArduCAM::InitCAM()
