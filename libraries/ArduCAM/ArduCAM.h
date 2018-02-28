@@ -94,7 +94,8 @@
 #ifndef ArduCAM_H
 #define ArduCAM_H
 #include "memorysaver.h"
-#if defined ( ARCH_ARDUINO ) 
+#include "ArduCAM_Arch.h"
+#if defined ( ARCH_ARDUINO )
 	#include "Arduino.h"
 #endif
 
@@ -355,6 +356,9 @@ struct sensor_reg {
 
 class ArduCAM 
 {
+	private:
+	ArduCAM_Arch arch;
+
 	public:
 	ArduCAM( void );
 	ArduCAM(byte model ,int CS);

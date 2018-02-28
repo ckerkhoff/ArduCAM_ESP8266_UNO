@@ -9,7 +9,7 @@
 	#define Wire Wire1
 #endif
 
-bool arducam_i2c_init(uint8_t sensor_addr)
+bool ArduCAM_Arch::arducam_i2c_init(uint8_t sensor_addr)
 {
 	#if defined(__SAM3X8E__)
     	Wire1.begin();
@@ -18,7 +18,7 @@ bool arducam_i2c_init(uint8_t sensor_addr)
   	#endif
 }
 
-void arducam_spi_init()
+void ArduCAM_Arch::arducam_spi_init()
 {
 	// initialize SPI:
 	SPI.begin();
@@ -26,7 +26,7 @@ void arducam_spi_init()
 }
 
 // Read/write 8 bit value to/from 8 bit register address
-byte wrSensorReg8_8(byte sensor_addr, int regID, int regDat)
+byte ArduCAM_Arch::wrSensorReg8_8(byte sensor_addr, int regID, int regDat)
 {
 	Wire.beginTransmission(sensor_addr);
 	Wire.write(regID & 0x00FF);
@@ -38,7 +38,7 @@ byte wrSensorReg8_8(byte sensor_addr, int regID, int regDat)
 	delay(1);
 	return 1;
 }
-byte rdSensorReg8_8(byte sensor_addr, uint8_t regID, uint8_t* regDat)
+byte ArduCAM_Arch::rdSensorReg8_8(byte sensor_addr, uint8_t regID, uint8_t* regDat)
 {
 	Wire.beginTransmission(sensor_addr);
 	Wire.write(regID & 0x00FF);
@@ -52,7 +52,7 @@ byte rdSensorReg8_8(byte sensor_addr, uint8_t regID, uint8_t* regDat)
 }
 
 // Read/write 16 bit value to/from 8 bit register address
-byte wrSensorReg8_16(byte sensor_addr, int regID, int regDat)
+byte ArduCAM_Arch::wrSensorReg8_16(byte sensor_addr, int regID, int regDat)
 {
 	Wire.beginTransmission(sensor_addr);
 	Wire.write(regID & 0x00FF);
@@ -67,7 +67,7 @@ byte wrSensorReg8_16(byte sensor_addr, int regID, int regDat)
 
 	return 1;
 }
-byte rdSensorReg8_16(byte sensor_addr, uint8_t regID, uint16_t* regDat)
+byte ArduCAM_Arch::rdSensorReg8_16(byte sensor_addr, uint8_t regID, uint16_t* regDat)
 {
   	uint8_t temp;
 	Wire.beginTransmission(sensor_addr);
@@ -86,7 +86,7 @@ byte rdSensorReg8_16(byte sensor_addr, uint8_t regID, uint16_t* regDat)
 }
 
 // Read/write 8 bit value to/from 16 bit register address
-byte wrSensorReg16_8(byte sensor_addr, int regID, int regDat)
+byte ArduCAM_Arch::wrSensorReg16_8(byte sensor_addr, int regID, int regDat)
 {
 	Wire.beginTransmission(sensor_addr);
 	Wire.write(regID >> 8);            // sends instruction byte, MSB first
@@ -100,7 +100,7 @@ byte wrSensorReg16_8(byte sensor_addr, int regID, int regDat)
 
 	return 1;
 }
-byte rdSensorReg16_8(byte sensor_addr, uint16_t regID, uint8_t* regDat)
+byte ArduCAM_Arch::rdSensorReg16_8(byte sensor_addr, uint16_t regID, uint8_t* regDat)
 {
 	Wire.beginTransmission(sensor_addr);
 	Wire.write(regID >> 8);
@@ -117,7 +117,7 @@ byte rdSensorReg16_8(byte sensor_addr, uint16_t regID, uint8_t* regDat)
 }
 
 //I2C Write 16bit address, 16bit data
-byte wrSensorReg16_16(byte sensor_addr, int regID, int regDat)
+byte ArduCAM_Arch::wrSensorReg16_16(byte sensor_addr, int regID, int regDat)
 {
 	Wire.beginTransmission(sensor_addr);
 	Wire.write(regID >> 8);            // sends instruction byte, MSB first
@@ -134,7 +134,7 @@ byte wrSensorReg16_16(byte sensor_addr, int regID, int regDat)
 }
 
 //I2C Read 16bit address, 16bit data
-byte rdSensorReg16_16(byte sensor_addr, uint16_t regID, uint16_t* regDat)
+byte ArduCAM_Arch::rdSensorReg16_16(byte sensor_addr, uint16_t regID, uint16_t* regDat)
 {
 	uint16_t temp;
 	Wire.beginTransmission(sensor_addr);
@@ -152,13 +152,13 @@ byte rdSensorReg16_16(byte sensor_addr, uint16_t regID, uint16_t* regDat)
   	return (1);
 }
 
-void arducam_spi_write(uint8_t address, uint8_t value)
+void ArduCAM_Arch::arducam_spi_write(uint8_t address, uint8_t value)
 {
 	SPI.transfer(address);
 	SPI.transfer(value);
 }
 
-uint8_t arducam_spi_read(uint8_t address)
+uint8_t ArduCAM_Arch::arducam_spi_read(uint8_t address)
 {
 	uint8_t value;
 	SPI.transfer(address);
@@ -167,16 +167,16 @@ uint8_t arducam_spi_read(uint8_t address)
 	return value;
 }
 
-void arducam_spi_transfer(uint8_t data)
+void ArduCAM_Arch::arducam_spi_transfer(uint8_t data)
 {
 	SPI.transfer(data);
 }
 
-void arducam_spi_transfers(uint8_t *buf, uint32_t size)
+void ArduCAM_Arch::arducam_spi_transfers(uint8_t *buf, uint32_t size)
 {
 }
 
-void arducam_delay_ms(uint32_t delay_ms)
+void ArduCAM_Arch::arducam_delay_ms(uint32_t delay_ms)
 {
 	delay(delay_ms);
 }

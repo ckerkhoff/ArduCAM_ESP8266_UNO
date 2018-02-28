@@ -171,11 +171,11 @@ ArduCAM::ArduCAM(byte model ,int CS)
 
 void ArduCAM::InitComs()
 {
-  if (!arducam_i2c_init(sensor_addr)) {
+  if (!arch.arducam_i2c_init(sensor_addr)) {
     printf("ERROR: I2C init failed\n");
   }
 
-  arducam_spi_init();
+  arch.arducam_spi_init();
 }
 
 void ArduCAM::InitCAM()
@@ -186,8 +186,8 @@ void ArduCAM::InitCAM()
     case OV7660:
       {
 #if defined OV7660_CAM
-        wrSensorReg8_8(sensor_addr, 0x12, 0x80);
-        arducam_delay_ms(100);
+        arch.wrSensorReg8_8(sensor_addr, 0x12, 0x80);
+        arch.arducam_delay_ms(100);
         wrSensorRegs8_8(OV7660_QVGA);
 #endif
         break;
@@ -196,19 +196,19 @@ void ArduCAM::InitCAM()
       {
 #if defined OV7725_CAM
        byte reg_val;
-        wrSensorReg8_8(sensor_addr, 0x12, 0x80);
-        arducam_delay_ms(100);
+        arch.wrSensorReg8_8(sensor_addr, 0x12, 0x80);
+        arch.arducam_delay_ms(100);
         wrSensorRegs8_8(OV7725_QVGA);
-        rdSensorReg8_8(sensor_addr, 0x15, &reg_val);
-        wrSensorReg8_8(sensor_addr, 0x15, (reg_val | 0x02));
+        arch.rdSensorReg8_8(sensor_addr, 0x15, &reg_val);
+        arch.wrSensorReg8_8(sensor_addr, 0x15, (reg_val | 0x02));
 #endif
         break;
       }
     case OV7670:
       {
 #if defined OV7670_CAM
-        wrSensorReg8_8(sensor_addr, 0x12, 0x80);
-        arducam_delay_ms(100);
+        arch.wrSensorReg8_8(sensor_addr, 0x12, 0x80);
+        arch.arducam_delay_ms(100);
         wrSensorRegs8_8(OV7670_QVGA);
 #endif
         break;
@@ -216,8 +216,8 @@ void ArduCAM::InitCAM()
     case OV7675:
       {
 #if defined OV7675_CAM
-        wrSensorReg8_8(sensor_addr, 0x12, 0x80);
-        arducam_delay_ms(100);
+        arch.wrSensorReg8_8(sensor_addr, 0x12, 0x80);
+        arch.arducam_delay_ms(100);
         wrSensorRegs8_8(OV7675_QVGA);
 
 #endif
@@ -228,12 +228,12 @@ void ArduCAM::InitCAM()
       {
 #if defined MT9D111_CAM
         wrSensorRegs8_16(MT9D111_QVGA_30fps);
-        arducam_delay_ms(1000);
-        wrSensorReg8_16(sensor_addr, 0x97, 0x0020);
-        wrSensorReg8_16(sensor_addr, 0xf0, 0x00);
-        wrSensorReg8_16(sensor_addr, 0x21, 0x8403); //Mirror Column
-        wrSensorReg8_16(sensor_addr, 0xC6, 0xA103);//SEQ_CMD
-        wrSensorReg8_16(sensor_addr, 0xC8, 0x0005); //SEQ_CMD
+        arch.arducam_delay_ms(1000);
+        arch.wrSensorReg8_16(sensor_addr, 0x97, 0x0020);
+        arch.wrSensorReg8_16(sensor_addr, 0xf0, 0x00);
+        arch.wrSensorReg8_16(sensor_addr, 0x21, 0x8403); //Mirror Column
+        arch.wrSensorReg8_16(sensor_addr, 0xC6, 0xA103);//SEQ_CMD
+        arch.wrSensorReg8_16(sensor_addr, 0xC8, 0x0005); //SEQ_CMD
 #endif
         break;
 
@@ -241,36 +241,36 @@ void ArduCAM::InitCAM()
     case OV5642:
       {
 #if ( defined(OV5642_CAM) || defined(OV5642_MINI_5MP) || defined(OV5642_MINI_5MP_BIT_ROTATION_FIXED) || defined(OV5642_MINI_5MP_PLUS) )
-        wrSensorReg16_8(sensor_addr, 0x3008, 0x80);
+        arch.wrSensorReg16_8(sensor_addr, 0x3008, 0x80);
         wrSensorRegs16_8(OV5642_QVGA_Preview);
-			  arducam_delay_ms(100);
+			  arch.arducam_delay_ms(100);
         if (m_fmt == JPEG)
         {
-				  arducam_delay_ms(100);
+				  arch.arducam_delay_ms(100);
           wrSensorRegs16_8(OV5642_JPEG_Capture_QSXGA);
           wrSensorRegs16_8(ov5642_320x240);
-			    arducam_delay_ms(100);
-          wrSensorReg16_8(sensor_addr, 0x3818, 0xa8);
-          wrSensorReg16_8(sensor_addr, 0x3621, 0x10);
-          wrSensorReg16_8(sensor_addr, 0x3801, 0xb0);
+			    arch.arducam_delay_ms(100);
+          arch.wrSensorReg16_8(sensor_addr, 0x3818, 0xa8);
+          arch.wrSensorReg16_8(sensor_addr, 0x3621, 0x10);
+          arch.wrSensorReg16_8(sensor_addr, 0x3801, 0xb0);
           #if (defined(OV5642_MINI_5MP_PLUS) || (defined ARDUCAM_SHIELD_V2))
-          wrSensorReg16_8(sensor_addr, 0x4407, 0x04);
+          arch.wrSensorReg16_8(sensor_addr, 0x4407, 0x04);
           #else
-          wrSensorReg16_8(sensor_addr, 0x4407, 0x0C);
+          arch.wrSensorReg16_8(sensor_addr, 0x4407, 0x0C);
           #endif
         }
         else
         {
         	byte reg_val;
-          wrSensorReg16_8(sensor_addr, 0x4740, 0x21);
-          wrSensorReg16_8(sensor_addr, 0x501e, 0x2a);
-          wrSensorReg16_8(sensor_addr, 0x5002, 0xf8);
-          wrSensorReg16_8(sensor_addr, 0x501f, 0x01);
-          wrSensorReg16_8(sensor_addr, 0x4300, 0x61);
-          rdSensorReg16_8(sensor_addr, 0x3818, &reg_val);
-          wrSensorReg16_8(sensor_addr, 0x3818, (reg_val | 0x60) & 0xff);
-          rdSensorReg16_8(sensor_addr, 0x3621, &reg_val);
-          wrSensorReg16_8(sensor_addr, 0x3621, reg_val & 0xdf);
+          arch.wrSensorReg16_8(sensor_addr, 0x4740, 0x21);
+          arch.wrSensorReg16_8(sensor_addr, 0x501e, 0x2a);
+          arch.wrSensorReg16_8(sensor_addr, 0x5002, 0xf8);
+          arch.wrSensorReg16_8(sensor_addr, 0x501f, 0x01);
+          arch.wrSensorReg16_8(sensor_addr, 0x4300, 0x61);
+          arch.rdSensorReg16_8(sensor_addr, 0x3818, &reg_val);
+          arch.wrSensorReg16_8(sensor_addr, 0x3818, (reg_val | 0x60) & 0xff);
+          arch.rdSensorReg16_8(sensor_addr, 0x3621, &reg_val);
+          arch.wrSensorReg16_8(sensor_addr, 0x3621, reg_val & 0xdf);
         }
 
 #endif
@@ -279,27 +279,27 @@ void ArduCAM::InitCAM()
     case OV5640:
       {
 #if ( defined(OV5640_CAM) || defined(OV5640_MINI_5MP_PLUS) )
-        arducam_delay_ms(100);
+        arch.arducam_delay_ms(100);
         if (m_fmt == JPEG)
         {
-          wrSensorReg16_8(sensor_addr, 0x3103, 0x11);
-          wrSensorReg16_8(sensor_addr, 0x3008, 0x82);
-          arducam_delay_ms(100);
+          arch.wrSensorReg16_8(sensor_addr, 0x3103, 0x11);
+          arch.wrSensorReg16_8(sensor_addr, 0x3008, 0x82);
+          arch.arducam_delay_ms(100);
           wrSensorRegs16_8(OV5640YUV_Sensor_Dvp_Init);
-          arducam_delay_ms(500);
+          arch.arducam_delay_ms(500);
           wrSensorRegs16_8(OV5640_JPEG_QSXGA);
           wrSensorRegs16_8(OV5640_QSXGA2QVGA);
           #if (defined(OV5640_MINI_5MP_PLUS) || (defined ARDUCAM_SHIELD_V2))
-          wrSensorReg16_8(sensor_addr, 0x4407, 0x04);
+          arch.wrSensorReg16_8(sensor_addr, 0x4407, 0x04);
           #else
-          wrSensorReg16_8(sensor_addr, 0x4407, 0x0C);
+          arch.wrSensorReg16_8(sensor_addr, 0x4407, 0x0C);
           #endif
         }
         else
         {
-          wrSensorReg16_8(sensor_addr, 0x3103, 0x11);
-          wrSensorReg16_8(sensor_addr, 0x3008, 0x82);
-          arducam_delay_ms(500);
+          arch.wrSensorReg16_8(sensor_addr, 0x3103, 0x11);
+          arch.wrSensorReg16_8(sensor_addr, 0x3008, 0x82);
+          arch.arducam_delay_ms(500);
           wrSensorRegs16_8(OV5640YUV_Sensor_Dvp_Init);
           wrSensorRegs16_8(OV5640_RGB_QVGA);
         }
@@ -317,19 +317,19 @@ void ArduCAM::InitCAM()
     case OV2640:
       {
 #if (defined(OV2640_CAM) || defined(OV2640_MINI_2MP))
-        wrSensorReg8_8(sensor_addr, 0xff, 0x01);
-        wrSensorReg8_8(sensor_addr, 0x12, 0x80);
-        arducam_delay_ms(100);
+        arch.wrSensorReg8_8(sensor_addr, 0xff, 0x01);
+        arch.wrSensorReg8_8(sensor_addr, 0x12, 0x80);
+        arch.arducam_delay_ms(100);
         if (m_fmt == JPEG)
         {
           wrSensorRegs8_8(OV2640_JPEG_INIT);
           wrSensorRegs8_8(OV2640_YUV422);
           wrSensorRegs8_8(OV2640_JPEG);
-          wrSensorReg8_8(sensor_addr, 0xff, 0x01);
-          wrSensorReg8_8(sensor_addr, 0x15, 0x00);
+          arch.wrSensorReg8_8(sensor_addr, 0xff, 0x01);
+          arch.wrSensorReg8_8(sensor_addr, 0x15, 0x00);
           wrSensorRegs8_8(OV2640_320x240_JPEG);
-          //wrSensorReg8_8(sensor_addr, 0xff, 0x00);
-          //wrSensorReg8_8(sensor_addr, 0x44, 0x32);
+          //arch.wrSensorReg8_8(sensor_addr, 0xff, 0x00);
+          //arch.wrSensorReg8_8(sensor_addr, 0x44, 0x32);
         }
         else
         {
@@ -354,21 +354,21 @@ void ArduCAM::InitCAM()
       {
 #if defined MT9V111_CAM
         //Reset sensor core
-        wrSensorReg8_16(sensor_addr, 0x01, 0x04);
-        wrSensorReg8_16(sensor_addr, 0x0D, 0x01);
-        wrSensorReg8_16(sensor_addr, 0x0D, 0x00);
+        arch.wrSensorReg8_16(sensor_addr, 0x01, 0x04);
+        arch.wrSensorReg8_16(sensor_addr, 0x0D, 0x01);
+        arch.wrSensorReg8_16(sensor_addr, 0x0D, 0x00);
         //Reset IFP
-        wrSensorReg8_16(sensor_addr, 0x01, 0x01);
-        wrSensorReg8_16(sensor_addr, 0x07, 0x01);
-        wrSensorReg8_16(sensor_addr, 0x07, 0x00);
-        arducam_delay_ms(100);
+        arch.wrSensorReg8_16(sensor_addr, 0x01, 0x01);
+        arch.wrSensorReg8_16(sensor_addr, 0x07, 0x01);
+        arch.wrSensorReg8_16(sensor_addr, 0x07, 0x00);
+        arch.arducam_delay_ms(100);
         wrSensorRegs8_16(MT9V111_QVGA);
         //delay(1000);
-        wrSensorReg8_16(sensor_addr, 0x97, 0x0020);
-        wrSensorReg8_16(sensor_addr, 0xf0, 0x00);
-        wrSensorReg8_16(sensor_addr, 0x21, 0x8403); //Mirror Column
-        wrSensorReg8_16(sensor_addr, 0xC6, 0xA103);//SEQ_CMD
-        wrSensorReg8_16(sensor_addr, 0xC8, 0x0005); //SEQ_CMD
+        arch.wrSensorReg8_16(sensor_addr, 0x97, 0x0020);
+        arch.wrSensorReg8_16(sensor_addr, 0xf0, 0x00);
+        arch.wrSensorReg8_16(sensor_addr, 0x21, 0x8403); //Mirror Column
+        arch.wrSensorReg8_16(sensor_addr, 0xC6, 0xA103);//SEQ_CMD
+        arch.wrSensorReg8_16(sensor_addr, 0xC8, 0x0005); //SEQ_CMD
 #endif
         break;
       }
@@ -384,176 +384,176 @@ void ArduCAM::InitCAM()
       {
 #if defined MT9T112_CAM
 
-        wrSensorReg16_16(sensor_addr, 0x001a , 0x0219 );
-        wrSensorReg16_16(sensor_addr, 0x001a , 0x0018 );
+        arch.wrSensorReg16_16(sensor_addr, 0x001a , 0x0219 );
+        arch.wrSensorReg16_16(sensor_addr, 0x001a , 0x0018 );
         //reset camera
-        wrSensorReg16_16(sensor_addr, 0x0014 , 0x2425 );
-        wrSensorReg16_16(sensor_addr, 0x0014 , 0x2145 );
-        wrSensorReg16_16(sensor_addr, 0x0010 , 0x0110 );
-        wrSensorReg16_16(sensor_addr, 0x0012 , 0x00f0 );
-        wrSensorReg16_16(sensor_addr, 0x002a , 0x7f77 );
-        wrSensorReg16_16(sensor_addr, 0x0014 , 0x2545 );
-        wrSensorReg16_16(sensor_addr, 0x0014 , 0x2547 );
-        wrSensorReg16_16(sensor_addr, 0x0014 , 0x3447 );
-        wrSensorReg16_16(sensor_addr, 0x0014 , 0x3047 );
-        arducam_delay_ms(10);
-        wrSensorReg16_16(sensor_addr, 0x0014 , 0x3046 );
-        wrSensorReg16_16(sensor_addr, 0x0022 , 0x01f4 );
-        wrSensorReg16_16(sensor_addr, 0x001e , 0x0707 );
-        wrSensorReg16_16(sensor_addr, 0x3b84 , 0x01f4 );
-        wrSensorReg16_16(sensor_addr, 0x002e , 0x0500 );
-        wrSensorReg16_16(sensor_addr, 0x0018 , 0x402b );
-        wrSensorReg16_16(sensor_addr, 0x3b82 , 0x0004 );
-        wrSensorReg16_16(sensor_addr, 0x0018 , 0x402f );
-        wrSensorReg16_16(sensor_addr, 0x0018 , 0x402e );
-        arducam_delay_ms(50);
-        wrSensorReg16_16(sensor_addr, 0x0614 , 0x0001 );
-        arducam_delay_ms(1);
-        wrSensorReg16_16(sensor_addr, 0x0614 , 0x0001 );
-        arducam_delay_ms(1);
-        wrSensorReg16_16(sensor_addr, 0x0614 , 0x0001 );
-        arducam_delay_ms(1);
-        wrSensorReg16_16(sensor_addr, 0x0614 , 0x0001 );
-        arducam_delay_ms(1);
-        wrSensorReg16_16(sensor_addr, 0x0614 , 0x0001 );
-        arducam_delay_ms(1);
-        wrSensorReg16_16(sensor_addr, 0x0614 , 0x0001 );
-        arducam_delay_ms(1);
-        arducam_delay_ms(10);
+        arch.wrSensorReg16_16(sensor_addr, 0x0014 , 0x2425 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0014 , 0x2145 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0010 , 0x0110 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0012 , 0x00f0 );
+        arch.wrSensorReg16_16(sensor_addr, 0x002a , 0x7f77 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0014 , 0x2545 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0014 , 0x2547 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0014 , 0x3447 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0014 , 0x3047 );
+        arch.arducam_delay_ms(10);
+        arch.wrSensorReg16_16(sensor_addr, 0x0014 , 0x3046 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0022 , 0x01f4 );
+        arch.wrSensorReg16_16(sensor_addr, 0x001e , 0x0707 );
+        arch.wrSensorReg16_16(sensor_addr, 0x3b84 , 0x01f4 );
+        arch.wrSensorReg16_16(sensor_addr, 0x002e , 0x0500 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0018 , 0x402b );
+        arch.wrSensorReg16_16(sensor_addr, 0x3b82 , 0x0004 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0018 , 0x402f );
+        arch.wrSensorReg16_16(sensor_addr, 0x0018 , 0x402e );
+        arch.arducam_delay_ms(50);
+        arch.wrSensorReg16_16(sensor_addr, 0x0614 , 0x0001 );
+        arch.arducam_delay_ms(1);
+        arch.wrSensorReg16_16(sensor_addr, 0x0614 , 0x0001 );
+        arch.arducam_delay_ms(1);
+        arch.wrSensorReg16_16(sensor_addr, 0x0614 , 0x0001 );
+        arch.arducam_delay_ms(1);
+        arch.wrSensorReg16_16(sensor_addr, 0x0614 , 0x0001 );
+        arch.arducam_delay_ms(1);
+        arch.wrSensorReg16_16(sensor_addr, 0x0614 , 0x0001 );
+        arch.arducam_delay_ms(1);
+        arch.wrSensorReg16_16(sensor_addr, 0x0614 , 0x0001 );
+        arch.arducam_delay_ms(1);
+        arch.arducam_delay_ms(10);
         //init pll
-        wrSensorReg16_16(sensor_addr, 0x098e , 0x6800 );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x0140 );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0x6802 );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x00f0 );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0x68a0 );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0x68a0 );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x082d );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0x4802 );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x0000 );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0x4804 );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x0000 );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0x4806 );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x060d );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0x4808 );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x080d );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0x480c );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x046c );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0x480f );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x00cc );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0x4811 );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x0381 );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0x4813 );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x024f );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0x481d );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x0436 );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0x481f );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x05d0 );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0x4825 );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x1153 );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0x6ca0 );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0x6ca0 );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x082d );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0x484a );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x0004 );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0x484c );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x0004 );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0x484e );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x060b );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0x4850 );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x080b );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0x4857 );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x008c );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0x4859 );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x01f1 );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0x485b );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x00ff );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0x4865 );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x0668 );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0x4867 );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x0af0 );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0x486d );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x0af0 );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0xa005 );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x0001 );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0x6c11 );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x0003 );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0x6811 );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x0003 );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0xc8a5 );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x0025 );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0xc8a6 );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x0028 );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0xc8a7 );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x002c );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0xc8a8 );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x002f );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0xc844 );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x00ba );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0xc92f );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x0000 );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0xc845 );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x009b );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0xc92d );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x0000 );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0xc88c );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x0082 );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0xc930 );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x0000 );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0xc88d );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x006d );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0xc92e );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x0000 );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0xa002 );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x0010 );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0xa009 );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x0002 );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0xa00a );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x0003 );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0xa00c );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x000a );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0x4846 );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x0014 );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0x488e );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x0014 );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0xc844 );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x0085 );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0xc845 );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x006e );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0xc88c );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x0082 );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0xc88d );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x006c );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0xc8a5 );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x001b );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0xc8a6 );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x001e );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0xc8a7 );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x0020 );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0xc8a8 );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x0023 );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0x6800 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x0140 );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0x6802 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x00f0 );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0x68a0 );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0x68a0 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x082d );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0x4802 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x0000 );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0x4804 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x0000 );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0x4806 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x060d );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0x4808 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x080d );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0x480c );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x046c );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0x480f );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x00cc );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0x4811 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x0381 );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0x4813 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x024f );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0x481d );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x0436 );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0x481f );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x05d0 );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0x4825 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x1153 );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0x6ca0 );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0x6ca0 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x082d );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0x484a );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x0004 );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0x484c );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x0004 );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0x484e );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x060b );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0x4850 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x080b );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0x4857 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x008c );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0x4859 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x01f1 );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0x485b );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x00ff );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0x4865 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x0668 );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0x4867 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x0af0 );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0x486d );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x0af0 );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0xa005 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x0001 );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0x6c11 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x0003 );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0x6811 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x0003 );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0xc8a5 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x0025 );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0xc8a6 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x0028 );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0xc8a7 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x002c );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0xc8a8 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x002f );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0xc844 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x00ba );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0xc92f );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x0000 );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0xc845 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x009b );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0xc92d );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x0000 );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0xc88c );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x0082 );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0xc930 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x0000 );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0xc88d );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x006d );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0xc92e );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x0000 );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0xa002 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x0010 );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0xa009 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x0002 );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0xa00a );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x0003 );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0xa00c );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x000a );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0x4846 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x0014 );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0x488e );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x0014 );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0xc844 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x0085 );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0xc845 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x006e );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0xc88c );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x0082 );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0xc88d );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x006c );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0xc8a5 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x001b );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0xc8a6 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x001e );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0xc8a7 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x0020 );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0xc8a8 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x0023 );
         //init setting
-        wrSensorReg16_16(sensor_addr, 0x0018 , 0x002a );
-        wrSensorReg16_16(sensor_addr, 0x3084 , 0x2409 );
-        wrSensorReg16_16(sensor_addr, 0x3092 , 0x0a49 );
-        wrSensorReg16_16(sensor_addr, 0x3094 , 0x4949 );
-        wrSensorReg16_16(sensor_addr, 0x3096 , 0x4950 );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0x68a0 );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x0a2e );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0x6ca0 );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x0a2e );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0x6c90 );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x0cb4 );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0x6807 );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x0004 );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0xe88e );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x0000 );
-        wrSensorReg16_16(sensor_addr, 0x316c , 0x350f );
-        wrSensorReg16_16(sensor_addr, 0x001e , 0x0777 );
-        wrSensorReg16_16(sensor_addr, 0x098e , 0x8400 );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x0001 );
-        arducam_delay_ms(100);
-        wrSensorReg16_16(sensor_addr, 0x098e , 0x8400 );
-        wrSensorReg16_16(sensor_addr, 0x0990 , 0x0006 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0018 , 0x002a );
+        arch.wrSensorReg16_16(sensor_addr, 0x3084 , 0x2409 );
+        arch.wrSensorReg16_16(sensor_addr, 0x3092 , 0x0a49 );
+        arch.wrSensorReg16_16(sensor_addr, 0x3094 , 0x4949 );
+        arch.wrSensorReg16_16(sensor_addr, 0x3096 , 0x4950 );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0x68a0 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x0a2e );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0x6ca0 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x0a2e );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0x6c90 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x0cb4 );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0x6807 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x0004 );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0xe88e );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x0000 );
+        arch.wrSensorReg16_16(sensor_addr, 0x316c , 0x350f );
+        arch.wrSensorReg16_16(sensor_addr, 0x001e , 0x0777 );
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0x8400 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x0001 );
+        arch.arducam_delay_ms(100);
+        arch.wrSensorReg16_16(sensor_addr, 0x098e , 0x8400 );
+        arch.wrSensorReg16_16(sensor_addr, 0x0990 , 0x0006 );
         //Serial.println("MT9T112 init done");
 #endif
         break;
@@ -561,22 +561,22 @@ void ArduCAM::InitCAM()
     case MT9D112:
       {
 #if defined MT9D112_CAM
-        wrSensorReg16_16(sensor_addr, 0x301a , 0x0acc );
-        wrSensorReg16_16(sensor_addr, 0x3202 , 0x0008 );
-        arducam_delay_ms(100 );
-        wrSensorReg16_16(sensor_addr, 0x341e , 0x8f09 );
-        wrSensorReg16_16(sensor_addr, 0x341c , 0x020c );
-        arducam_delay_ms(100 );
+        arch.wrSensorReg16_16(sensor_addr, 0x301a , 0x0acc );
+        arch.wrSensorReg16_16(sensor_addr, 0x3202 , 0x0008 );
+        arch.arducam_delay_ms(100 );
+        arch.wrSensorReg16_16(sensor_addr, 0x341e , 0x8f09 );
+        arch.wrSensorReg16_16(sensor_addr, 0x341c , 0x020c );
+        arch.arducam_delay_ms(100 );
         wrSensorRegs16_16(MT9D112_default_setting);
-        wrSensorReg16_16(sensor_addr, 0x338c , 0xa103 );
-        wrSensorReg16_16(sensor_addr, 0x3390 , 0x0006 );
-        arducam_delay_ms(100 );
-        wrSensorReg16_16(sensor_addr, 0x338c , 0xa103 );
-        wrSensorReg16_16(sensor_addr, 0x3390 , 0x0005 );
-        arducam_delay_ms(100 );
+        arch.wrSensorReg16_16(sensor_addr, 0x338c , 0xa103 );
+        arch.wrSensorReg16_16(sensor_addr, 0x3390 , 0x0006 );
+        arch.arducam_delay_ms(100 );
+        arch.wrSensorReg16_16(sensor_addr, 0x338c , 0xa103 );
+        arch.wrSensorReg16_16(sensor_addr, 0x3390 , 0x0005 );
+        arch.arducam_delay_ms(100 );
         wrSensorRegs16_16(MT9D112_soc_init);
-        arducam_delay_ms(200);
-        wrSensorReg16_16(sensor_addr, 0x332E, 0x0020); //RGB565
+        arch.arducam_delay_ms(200);
+        arch.wrSensorReg16_16(sensor_addr, 0x332E, 0x0020); //RGB565
 
 #endif
       }
@@ -592,27 +592,27 @@ bool ArduCAM::VerifyModuleType(void)
 
   #if defined (OV2640_MINI_2MP) || defined (OV2640_CAM)
     //Check if the camera module type is OV2640
-    wrSensorReg8_8(sensor_addr, 0xff, 0x01);
-    rdSensorReg8_8(sensor_addr, OV2640_CHIPID_HIGH, &vid);
-    rdSensorReg8_8(sensor_addr, OV2640_CHIPID_LOW, &pid);
+    arch.wrSensorReg8_8(sensor_addr, 0xff, 0x01);
+    arch.rdSensorReg8_8(sensor_addr, OV2640_CHIPID_HIGH, &vid);
+    arch.rdSensorReg8_8(sensor_addr, OV2640_CHIPID_LOW, &pid);
     if ((vid != 0x26 ) && (( pid != 0x41 ) || ( pid != 0x42 )))
       return false;
     else
       return true;
   #elif defined (OV5640_MINI_5MP_PLUS) || defined (OV5640_CAM)
     //Check if the camera module type is OV5640
-    wrSensorReg16_8(sensor_addr, 0xff, 0x01);
-    rdSensorReg16_8(sensor_addr, OV5640_CHIPID_HIGH, &vid);
-    rdSensorReg16_8(sensor_addr, OV5640_CHIPID_LOW, &pid);
+    arch.wrSensorReg16_8(sensor_addr, 0xff, 0x01);
+    arch.rdSensorReg16_8(sensor_addr, OV5640_CHIPID_HIGH, &vid);
+    arch.rdSensorReg16_8(sensor_addr, OV5640_CHIPID_LOW, &pid);
     if((vid != 0x56) || (pid != 0x40))
       return false;
     else
       return true;
   #elif defined (OV5642_MINI_5MP_PLUS) || defined (OV5642_MINI_5MP) || defined (OV5642_MINI_5MP_BIT_ROTATION_FIXED) ||(defined (OV5642_CAM))
     //Check if the camera module type is OV5642
-    wrSensorReg16_8(sensor_addr, 0xff, 0x01);
-    rdSensorReg16_8(sensor_addr, OV5642_CHIPID_HIGH, &vid);
-    rdSensorReg16_8(sensor_addr, OV5642_CHIPID_LOW, &pid);
+    arch.wrSensorReg16_8(sensor_addr, 0xff, 0x01);
+    arch.rdSensorReg16_8(sensor_addr, OV5642_CHIPID_HIGH, &vid);
+    arch.rdSensorReg16_8(sensor_addr, OV5642_CHIPID_LOW, &pid);
     if((vid != 0x56) || (pid != 0x42)){
       return false;
     }
@@ -651,20 +651,20 @@ uint32_t ArduCAM::read_fifo_length(void)
 uint8_t ArduCAM::transfer(uint8_t data)
 {
   uint8_t temp;
-  arducam_spi_transfer(data);
+  arch.arducam_spi_transfer(data);
   return temp;
 }
 
 void ArduCAM::transfers(uint8_t *buf, uint32_t size)
 {
-	arducam_spi_transfers(buf, size);
+	arch.arducam_spi_transfers(buf, size);
 }
 
 #endif
 
 void ArduCAM::set_fifo_burst()
 {
-  arducam_spi_transfer(BURST_FIFO_READ);
+  arch.arducam_spi_transfer(BURST_FIFO_READ);
 }
 
 void ArduCAM::CS_HIGH(void)
@@ -754,7 +754,7 @@ void ArduCAM::set_mode(uint8_t mode)
 uint8_t ArduCAM::bus_write(int address,int value)
 {	
 	cbi(P_CS, B_CS);
-	arducam_spi_write(address, value);
+	arch.arducam_spi_write(address, value);
 	sbi(P_CS, B_CS);
 	return 1;
 }
@@ -765,11 +765,11 @@ uint8_t ArduCAM:: bus_read(int address)
 	cbi(P_CS, B_CS);
 
 	#if (!defined(RASPBERRY_PI) && (defined(ESP8266) || defined(__arm__)) && defined(OV5642_MINI_5MP))
-		value = arducam_spi_read(address);
+		value = arch.arducam_spi_read(address);
     // correction for bit rotation from readback
 		value = (byte)(value >> 1) | (value << 7);
 	#else
-		value = arducam_spi_read(address);
+		value = arch.arducam_spi_read(address);
   #endif
 
   // take the SS pin high to de-select the chip:
@@ -917,7 +917,7 @@ int ArduCAM::wrSensorRegs8_8(const struct sensor_reg reglist[])
 	  {
 	    reg_addr = pgm_read_word(&next->reg);
 	    reg_val = pgm_read_word(&next->val);
-	    err = wrSensorReg8_8(sensor_addr, reg_addr, reg_val);
+	    err = arch.wrSensorReg8_8(sensor_addr, reg_addr, reg_val);
 	    next++;
 		#if defined(ESP8266)
 		    yield();
@@ -946,7 +946,7 @@ int ArduCAM::wrSensorRegs8_16(const struct sensor_reg reglist[])
 	     reg_addr = pgm_read_word(&next->reg);
 	     reg_val = pgm_read_word(&next->val);
 	    #endif
-	    err = wrSensorReg8_16(sensor_addr, reg_addr, reg_val);
+	    err = arch.wrSensorReg8_16(sensor_addr, reg_addr, reg_val);
 	    //  if (!err)
 	    //return err;
 	    next++;
@@ -979,7 +979,7 @@ int ArduCAM::wrSensorRegs16_8(const struct sensor_reg reglist[])
 	     reg_addr = pgm_read_word(&next->reg);
 	     reg_val = pgm_read_word(&next->val);
 	    #endif
-	    err = wrSensorReg16_8(sensor_addr, reg_addr, reg_val);
+	    err = arch.wrSensorReg16_8(sensor_addr, reg_addr, reg_val);
 	    //if (!err)
 	    //return err;
 	    next++;
@@ -1003,7 +1003,7 @@ int ArduCAM::wrSensorRegs16_16(const struct sensor_reg reglist[])
 	  reg_val = pgm_read_word(&next->val);
 	  while ((reg_addr != 0xffff) | (reg_val != 0xffff))
 	  {
-	    err = wrSensorReg16_16(sensor_addr, reg_addr, reg_val);
+	    err = arch.wrSensorReg16_16(sensor_addr, reg_addr, reg_val);
 	    //if (!err)
 	    //   return err;
 	    next++;
