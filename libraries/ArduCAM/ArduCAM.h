@@ -320,8 +320,6 @@ class ArduCAM
 	inline void setDataBits(uint16_t bits);
 	
   protected:
-	regtype *P_CS;
-	regsize B_CS;
 	byte m_fmt;
 	byte sensor_model;
 	byte sensor_addr;

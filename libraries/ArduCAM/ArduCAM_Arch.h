@@ -93,6 +93,10 @@
 class ArduCAM_Arch
 {
   public:
+    void set_spi_cs(int CS);
+    void spi_cs_low();
+    void spi_cs_high();
+
     bool arducam_i2c_init(uint8_t sensor_addr);
 
     // Read/write 8 bit value to/from 8 bit register address

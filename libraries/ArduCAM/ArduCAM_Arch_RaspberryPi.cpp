@@ -10,6 +10,24 @@
 #define	SPI_ARDUCAM_SPEED	1000000
 #define	SPI_ARDUCAM	0
 
+void ArduCAM_Arch::set_spi_cs(int CS)
+{
+	if(CS>=0)
+	{
+		B_CS = CS;
+	}
+}
+
+void ArduCAM_Arch::spi_cs_low()
+{
+	cbi(P_CS, B_CS);
+}
+
+void ArduCAM_Arch::spi_cs_high()
+{
+	sbi(P_CS, B_CS);
+}
+
 bool ArduCAM_Arch::arducam_i2c_init(uint8_t sensor_addr)
 {
     return wiringPiI2CSetup(sensor_addr) != -1;
@@ -17,6 +35,7 @@ bool ArduCAM_Arch::arducam_i2c_init(uint8_t sensor_addr)
 
 void ArduCAM_Arch::arducam_spi_init()
 {
+	pinMode(CS, OUTPUT);
 	wiringPiSPISetup(SPI_ARDUCAM, SPI_ARDUCAM_SPEED);
 }
 
@@ -73,10 +92,14 @@ byte ArduCAM_Arch::rdSensorReg16_16(byte sensor_addr, uint16_t regID, uint16_t* 
 
 void ArduCAM_Arch::arducam_spi_write(uint8_t address, uint8_t value)
 {
+	cbi(P_CS, B_CS);
+
     uint8_t spiData[2];
 	spiData[0] = address | 0x80;
     spiData[1] = value;
 	wiringPiSPIDataRW(SPI_ARDUCAM, spiData, 2);
+
+	sbi(P_CS, B_CS);
 }
 
 uint8_t ArduCAM_Arch::arducam_spi_read(uint8_t address)
@@ -84,7 +107,10 @@ uint8_t ArduCAM_Arch::arducam_spi_read(uint8_t address)
 	uint8_t spiData[2];
 	spiData[0] = address & 0x7F;
 	spiData[1] = 0x00;
+
+	cbi(P_CS, B_CS);
   	wiringPiSPIDataRW(SPI_ARDUCAM, spiData, 2);
+	sbi(P_CS, B_CS);
 
   	return spiData[1];
 }

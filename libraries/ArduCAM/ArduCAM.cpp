@@ -111,24 +111,7 @@ ArduCAM::ArduCAM()
 }
 ArduCAM::ArduCAM(byte model ,int CS)
 {
-	#if defined (RASPBERRY_PI)
-		if(CS>=0)
-		{
-			B_CS = CS;
-		}
-	#else
-		#if defined(ESP8266)
-		  B_CS = CS;
-		#else
-		  P_CS  = portOutputRegister(digitalPinToPort(CS));
-		  B_CS  = digitalPinToBitMask(CS);
-		#endif
-	#endif
-
-  pinMode(CS, OUTPUT);
-  #if !defined(RASPBERRY_PI)
-    sbi(P_CS, B_CS);
-  #endif
+  arch.set_spi_cs(CS);
 
 	sensor_model = model;
 	switch (sensor_model)
@@ -669,11 +652,11 @@ void ArduCAM::set_fifo_burst()
 
 void ArduCAM::CS_HIGH(void)
 {
-	 sbi(P_CS, B_CS);	
+   arch.spi_cs_high();
 }
 void ArduCAM::CS_LOW(void)
 {
-	 cbi(P_CS, B_CS);	
+   arch.spi_cs_low();
 }
 
 uint8_t ArduCAM::read_fifo(void)
@@ -753,16 +736,14 @@ void ArduCAM::set_mode(uint8_t mode)
 
 uint8_t ArduCAM::bus_write(int address,int value)
 {	
-	cbi(P_CS, B_CS);
 	arch.arducam_spi_write(address, value);
-	sbi(P_CS, B_CS);
+
 	return 1;
 }
 
 uint8_t ArduCAM:: bus_read(int address)
 {
 	uint8_t value;
-	cbi(P_CS, B_CS);
 
 	#if (!defined(RASPBERRY_PI) && (defined(ESP8266) || defined(__arm__)) && defined(OV5642_MINI_5MP))
 		value = arch.arducam_spi_read(address);
@@ -772,9 +753,6 @@ uint8_t ArduCAM:: bus_read(int address)
 		value = arch.arducam_spi_read(address);
   #endif
 
-  // take the SS pin high to de-select the chip:
-	sbi(P_CS, B_CS);
-  
   return value;
 }
 
